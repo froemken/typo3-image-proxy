@@ -1,0 +1,10 @@
+# cat=basic; type=string; label=URL to ImgProxy: Define URL to a hosted or containerized ImgProxy service: https://hub.docker.com/r/darthsim/imgproxy/
+imgProxyUrl =
+# cat=basic; type=string; label=Security key: To prevent others using your img-proxy service you should sign the URL with a key: https://docs.imgproxy.net/#/signing_the_url
+imgProxyKey =
+# cat=basic; type=string; label=Security salt: To prevent others using your img-proxy service you should sign the URL with a salt: https://docs.imgproxy.net/#/signing_the_url
+imgProxySalt =
+# cat=basic; type=int+; label=Max image width: Resize large images to configured max width
+maxImageWidth =
+# cat=basic; type=int+; label=Max image height: Resize large images to configured max height
+maxImageHeight =

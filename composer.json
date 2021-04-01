@@ -1,0 +1,31 @@
+{
+	"name": "stefanfroemken/typo3-image-proxy",
+	"type": "typo3-cms-extension",
+	"description": "Resize uploaded images with imgproxy.",
+	"homepage": "https://typo3lexikon.de",
+	"license": ["GPL-2.0-or-later"],
+	"authors": [
+		{
+			"name": "Stefan Froemken",
+			"email": "froemken@gmail.com",
+			"role": "Developer"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/froemken/typo3_image_proxy/issues",
+		"source": "https://github.com/froemken/typo3_image_proxy"
+	},
+	"require": {
+		"typo3/cms-core": "^10.4"
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "typo3_image_proxy"
+		}
+	},
+	"autoload": {
+		"psr-4": {
+			"StefanFroemken\\Typo3ImageProxy\\": "Classes/"
+		}
+	}
+}
