@@ -12,6 +12,9 @@ jobs:
       matrix:
         typo3: [^10.4, ^11.0]
         php: ['7.3', '7.4']
+        exclude:
+          - typo3: ^11.0
+            php: '7.3'
 
     steps:
       - name: Checkout
