@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the package stefanfroemken/typo3-image-proxy.
  *
@@ -226,9 +228,11 @@ class ImgProxyProcessor implements ProcessorInterface
      * @param TaskInterface $task
      * @return string
      */
-    protected function getTemporaryFilePath(TaskInterface $task)
+    protected function getTemporaryFilePath(TaskInterface $task): string
     {
-        return GeneralUtility::tempnam($task->getName(), '.' . $task->getTargetFileExtension());
+        return GeneralUtility::tempnam(
+            $task->getName() . '_by_imgproxy', '.' . $task->getTargetFileExtension()
+        );
     }
 
     protected function getGraphicalFunctionsObject(): GraphicalFunctions
