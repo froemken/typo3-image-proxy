@@ -77,6 +77,8 @@ a hint how to find your website.
 If you host your website in a ddev container you can create a `docker-compose.override.yaml`
 file with following content:
 
+.. code-block::
+
    version: '3.6'
    services:
      web:
