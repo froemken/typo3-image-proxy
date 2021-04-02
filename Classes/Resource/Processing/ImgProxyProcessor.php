@@ -167,7 +167,7 @@ class ImgProxyProcessor implements ProcessorInterface
 
         $task->setExecuted(true);
         $imageDimensions = $this->getGraphicalFunctionsObject()->getImageDimensions($temporaryFilePath);
-        $task->getTargetFile()->setName($task->getTargetFileName());
+        $task->getTargetFile()->setName('ByImgProxy_' . $task->getTargetFileName());
         $task->getTargetFile()->updateProperties(
             [
                 'width' => $imageDimensions[0],
@@ -231,7 +231,7 @@ class ImgProxyProcessor implements ProcessorInterface
     protected function getTemporaryFilePath(TaskInterface $task): string
     {
         return GeneralUtility::tempnam(
-            $task->getName() . '_by_imgproxy', '.' . $task->getTargetFileExtension()
+            $task->getName(), '.' . $task->getTargetFileExtension()
         );
     }
 
