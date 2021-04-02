@@ -4,6 +4,8 @@ imgProxyUrl =
 imgProxyKey =
 # cat=basic; type=string; label=Security salt: To prevent others using your img-proxy service you should sign the URL with a salt: https://docs.imgproxy.net/#/signing_the_url
 imgProxySalt =
+# cat=basic; type=string; label=Alternative hostname: If you host ImgProxy on same machine where your website is running, the IP of your website may result in 127.0.0.1. In that case ImgProxy can't download image. Use this property to set an alternative hostname of your website which will be interpreted as external URL within ImgProxy: http://[IP]:[PORT]/
+altLocalHostName =
 # cat=basic; type=int+; label=Max image width: Resize large images to configured max width
 maxImageWidth =
 # cat=basic; type=int+; label=Max image height: Resize large images to configured max height
