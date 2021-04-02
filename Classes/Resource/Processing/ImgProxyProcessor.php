@@ -128,8 +128,8 @@ class ImgProxyProcessor implements ProcessorInterface
     public function processTask(TaskInterface $task)
     {
         // early return, if binary representation of key/salt are invalid
-        $keyBin = pack("H*" , $this->imgProxyKey);
-        $saltBin = pack("H*" , $this->imgProxySalt);
+        $keyBin = pack('H*', $this->imgProxyKey);
+        $saltBin = pack('H*', $this->imgProxySalt);
         if (empty($keyBin) || empty($saltBin)) {
             \TYPO3\CMS\Core\Utility\DebugUtility::debug('Key or Salt expected to be hex-encoded string');
             $task->setExecuted(false);
@@ -231,7 +231,8 @@ class ImgProxyProcessor implements ProcessorInterface
     protected function getTemporaryFilePath(TaskInterface $task): string
     {
         return GeneralUtility::tempnam(
-            $task->getName(), '.' . $task->getTargetFileExtension()
+            $task->getName(),
+            '.' . $task->getTargetFileExtension()
         );
     }
 

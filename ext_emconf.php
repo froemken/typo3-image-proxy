@@ -2,7 +2,7 @@
 
 $EM_CONF[$_EXTKEY] = [
     'title' => 'TYPO3 ImgProxy',
-    'description' => 'Resize uploaded images with imgproxy.',
+    'description' => 'Resize uploaded images with external imgproxy service.',
     'category' => 'backend',
     'state' => 'alpha',
     'clearCacheOnLoad' => 0,
@@ -11,7 +11,7 @@ $EM_CONF[$_EXTKEY] = [
     'version' => '0.0.1',
     'constraints' => [
         'depends' => [
-            'typo3' => '10.4.0-10.4.99',
+            'typo3' => '10.4.0-11.4.99',
         ],
         'conflicts' => [],
         'suggests' => [],
