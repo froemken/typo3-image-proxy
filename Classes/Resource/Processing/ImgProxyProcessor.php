@@ -51,18 +51,6 @@ class ImgProxyProcessor implements ProcessorInterface
 
     public function canProcessTask(TaskInterface $task): bool
     {
-        $sourceFile = $task->getSourceFile();
-        $this->configuration = $this->preProcessConfiguration($task->getConfiguration());
-
-        // Do not scale image if the source file has a size and the target size is larger
-        if (
-            $sourceFile->getProperty('width') > 0 && $sourceFile->getProperty('height') > 0
-            && $this->configuration['width'] > $sourceFile->getProperty('width')
-            && $this->configuration['height'] > $sourceFile->getProperty('height')
-        ) {
-            return false;
-        }
-
         return in_array($task->getTargetFileExtension(), $this->allowedImageExtensions, true);
     }
 
