@@ -13,6 +13,7 @@ namespace StefanFroemken\Typo3ImageProxy\EventListener;
 
 use StefanFroemken\Typo3ImageProxy\Service\ImgProxyService;
 use TYPO3\CMS\Core\Resource\Event\BeforeFileProcessingEvent;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Set processing URL of processed image
@@ -31,6 +32,7 @@ class SetProcessingUrlEventListener
 
     public function __invoke(BeforeFileProcessingEvent $event): void
     {
+        $arr = GeneralUtility::getIndpEnv('_ARRAY');
         $publicUrl = $this->imgProxyService->getProcessingUrl(
             $event->getFile(),
             $event->getProcessedFile(),
