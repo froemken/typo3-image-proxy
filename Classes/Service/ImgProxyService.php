@@ -105,6 +105,10 @@ class ImgProxyService implements LoggerAwareInterface
         }
     }
 
+    /**
+     * Get processing URL for external ImgProxy service.
+     * This method also sets the new dimensions to $targetFile
+     */
     public function getProcessingUrl(
         FileInterface $sourceFile,
         ProcessedFile $targetFile,
@@ -119,13 +123,19 @@ class ImgProxyService implements LoggerAwareInterface
         }
 
         $publicUrlOfImage = $this->getPublicUrlOfImage($sourceFile);
+        $width = $this->mergeWithDefaultConfiguration($configuration)['width'];
+        $height = $this->mergeWithDefaultConfiguration($configuration)['height'];
+        $targetFile->updateProperties([
+            'width' => $width,
+            'height' => $height,
+        ]);
 
         // PATH: /{$resize}/{$width}/{$height}/{$gravity}/{$enlarge}/{$encodedUrl}.{$extension}"
         $path = sprintf(
             '/%s/%d/%d/%s/%d/%s.%s',
             'fit',
-            $this->preProcessConfiguration($configuration)['width'],
-            $this->imageMaxHeight,
+            $width,
+            $height,
             'no',
             0,
             rtrim(strtr(base64_encode($publicUrlOfImage), '+/', '-_'), '='),
@@ -201,7 +211,7 @@ class ImgProxyService implements LoggerAwareInterface
         );
     }
 
-    public function preProcessConfiguration(array $configuration): array
+    public function mergeWithDefaultConfiguration(array $configuration): array
     {
         $configuration = array_replace($this->defaultConfiguration, $configuration);
         $configuration['width'] = MathUtility::forceIntegerInRange($configuration['width'], 1, $this->imageMaxWidth);
@@ -209,7 +219,7 @@ class ImgProxyService implements LoggerAwareInterface
 
         return array_filter(
             $configuration,
-            function ($value, $name) {
+            static function ($value, $name) {
                 return !empty($value) && in_array($name, ['width', 'height'], true);
             },
             ARRAY_FILTER_USE_BOTH
