@@ -12,15 +12,10 @@ declare(strict_types=1);
 namespace StefanFroemken\Typo3ImageProxy\Resource\Processing;
 
 use StefanFroemken\Typo3ImageProxy\Service\ImgProxyService;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Imaging\GraphicalFunctions;
-use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\Processing\ProcessorInterface;
 use TYPO3\CMS\Core\Resource\Processing\TaskInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 
 /**
  * Resize uploaded images
