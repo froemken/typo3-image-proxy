@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  StefanFroemken\Typo3ImageProxy\:
+    resource: '../Classes/*'
+
+  StefanFroemken\Typo3ImageProxy\EventListener\SetProcessingUrlEventListener:
+    tags:
+      - name: event.listener
+        event: TYPO3\CMS\Core\Resource\Event\BeforeFileProcessingEvent
