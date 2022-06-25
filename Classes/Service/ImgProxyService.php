@@ -21,7 +21,6 @@ use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Imaging\GraphicalFunctions;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileInterface;
-use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -213,7 +212,7 @@ class ImgProxyService implements LoggerAwareInterface
             ]
         );
 
-        $this->getResourceStorage()->replaceFile($sourceFile, $temporaryFilePath);
+        $sourceFile->getStorage()->replaceFile($sourceFile, $temporaryFilePath);
     }
 
     /**
@@ -298,10 +297,5 @@ class ImgProxyService implements LoggerAwareInterface
             },
             ARRAY_FILTER_USE_BOTH
         );
-    }
-
-    protected function getResourceStorage(): ResourceStorage
-    {
-        return GeneralUtility::makeInstance(ResourceStorage::class);
     }
 }
