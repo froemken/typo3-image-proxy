@@ -18,8 +18,12 @@ use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExis
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Imaging\GraphicalFunctions;
+use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileInterface;
+use TYPO3\CMS\Core\Resource\FileReference;
+use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\Processing\TaskInterface;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -156,8 +160,14 @@ class ImgProxyService implements LoggerAwareInterface
         );
     }
 
-    public function resizeImage(FileInterface $sourceFile, FileInterface $targetFile): void
+    public function resizeImage(FileInterface $sourceFile): void
     {
+        // We want to resize the original file
+        if (!$sourceFile instanceof File) {
+            return;
+        }
+
+        // Do not resize, if resize was already done
         if (
             $sourceFile->getProperty('width') > $this->imageMaxWidth
             || $sourceFile->getProperty('height') > $this->imageMaxHeight
@@ -167,15 +177,14 @@ class ImgProxyService implements LoggerAwareInterface
 
         $processingUrl = $this->getProcessingUrl(
             $sourceFile,
-            $targetFile,
+            $sourceFile,
             [
                 'width' => $sourceFile->getProperty('width'),
                 'height' => $sourceFile->getProperty('height')
             ]
         );
 
-        $task = $targetFile->getTask();
-        $temporaryFilePath = $this->getTemporaryFilePath($task);
+        $temporaryFilePath = $this->getTemporaryFilePath($sourceFile);
         file_put_contents($temporaryFilePath, $processingUrl);
 
         $imageDimensions = $this->getGraphicalFunctionsObject()->getImageDimensions($temporaryFilePath);
@@ -184,16 +193,16 @@ class ImgProxyService implements LoggerAwareInterface
             return;
         }
 
-        $task->getTargetFile()->setName('ByImgProxy_' . $task->getTargetFileName());
-        $task->getTargetFile()->updateProperties(
+        $sourceFile->updateProperties(
             [
                 'width' => $imageDimensions[0],
                 'height' => $imageDimensions[1],
                 'size' => filesize($temporaryFilePath),
-                'checksum' => $task->getConfigurationChecksum()
+                'checksum' => $sourceFile->calculateChecksum()
             ]
         );
-        $task->getTargetFile()->updateWithLocalFile($temporaryFilePath);
+        $resourceStorage = GeneralUtility::makeInstance(ResourceStorage::class);
+        $resourceStorage->replaceFile($sourceFile, $temporaryFilePath);
     }
 
     /**
@@ -252,11 +261,11 @@ class ImgProxyService implements LoggerAwareInterface
         );
     }
 
-    protected function getTemporaryFilePath(TaskInterface $task): string
+    protected function getTemporaryFilePath(FileInterface $file): string
     {
         return GeneralUtility::tempnam(
-            $task->getName(),
-            '.' . $task->getTargetFileExtension()
+            'ImgProxy_',
+            '.' . $file->getExtension()
         );
     }
 

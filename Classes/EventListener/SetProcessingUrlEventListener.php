@@ -31,7 +31,6 @@ class SetProcessingUrlEventListener
 
     public function __invoke(BeforeFileProcessingEvent $event): void
     {
-        $taskType = $event->getTaskType();
         $publicUrl = $this->imgProxyService->getProcessingUrl(
             $event->getFile(),
             $event->getProcessedFile(),

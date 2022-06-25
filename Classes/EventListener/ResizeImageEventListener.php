@@ -35,6 +35,6 @@ class ResizeImageEventListener implements LoggerAwareInterface
 
     public function __invoke(BeforeFileProcessingEvent $event): void
     {
-        $this->imgProxyService->resizeImage($event->getFile(), $event->getFile());
+        $this->imgProxyService->resizeImage($event->getFile());
     }
 }
