@@ -3,7 +3,7 @@
 ![Build Status](https://github.com/froemken/typo3_image_proxy/workflows/CI/badge.svg)
 
 typo3_image_proxy is an extension for TYPO3 CMS. It sends your uploaded pictures
-to a hosted or containerized ImgProxy service to resize your images.
+to a hosted or containerized ImgProxy service to resize and render your images.
 
 ## 1 Features
 

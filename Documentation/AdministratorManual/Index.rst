@@ -1,19 +1,21 @@
-.. include:: ../Includes.txt
+.. include:: /Includes.rst.txt
+
 
 .. _admin-manual:
 
+====================
 Administrator manual
 ====================
 
 Installation
-------------
+============
 
-imgproxy explains various kinds how to install its service.
+`imgproxy` explains various kinds how to install its service.
 
 Link: https://docs.imgproxy.net/#/installation
 
 Docker in Google Cloud Run
-**************************
+--------------------------
 
 I have created an extremely simple Dockerfile:
 
