@@ -1,8 +1,8 @@
 .. include:: /Includes.rst.txt
 
-=========
-<project>
-=========
+==========================
+ImgProxy service for TYPO3
+==========================
 
 :Extension key:
    typo3_image_proxy
@@ -29,8 +29,9 @@
 
 ----
 
-typo3_image_proxy is an extension for TYPO3 CMS. It sends your uploaded pictures
-to a hosted or containerized ImgProxy service to resize and render your images.
+`typo3_image_proxy` is an extension for TYPO3 CMS. It sends your uploaded
+pictures to a hosted or containerized ImgProxy service to resize and render
+your images.
 
 ----
 
