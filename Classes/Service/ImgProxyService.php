@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Imaging\GraphicalFunctions;
 use TYPO3\CMS\Core\Resource\FileInterface;
-use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Resource\Processing\TaskInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -113,7 +112,7 @@ class ImgProxyService implements LoggerAwareInterface
      */
     public function getProcessingUrl(
         FileInterface $sourceFile,
-        ProcessedFile $targetFile,
+        FileInterface $targetFile,
         array $configuration
     ): string {
         if ($this->imgProxyKeyBin === '' || $this->imgProxySaltBin === '') {
@@ -157,9 +156,12 @@ class ImgProxyService implements LoggerAwareInterface
         );
     }
 
-    public function resizeImage(FileInterface $sourceFile, ProcessedFile $targetFile): void
+    public function resizeImage(FileInterface $sourceFile, FileInterface $targetFile): void
     {
-        if ($targetFile->isProcessed()) {
+        if (
+            $sourceFile->getProperty('width') > $this->imageMaxWidth
+            || $sourceFile->getProperty('height') > $this->imageMaxHeight
+        ) {
             return;
         }
 
