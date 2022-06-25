@@ -1,57 +1,44 @@
-.. include:: Includes.txt
+.. include:: /Includes.rst.txt
 
+=========
+<project>
+=========
 
-.. Every manual should have a start label for cross-referencing to
-.. start page. Do not remove this!
+:Extension key:
+   typo3_image_proxy
 
-.. _start:
+:Package name:
+   ImgProxy service for TYPO3
 
-=============================================================
-typo3_image_proxy
-=============================================================
+:Version:
+   |release|
 
-.. only:: html
+:Language:
+   en
 
-   :Classification:
-      typo3_image_proxy
+:Author:
+   Stefan Froemken
 
-   :Version:
-      |release|
+:License:
+   This document is published under the
+   `Creative Commons BY 4.0 <https://creativecommons.org/licenses/by/4.0/>`__
+   license.
 
-   :Language:
-      en
+:Rendered:
+   |today|
 
-   :Description:
-      Manual covering TYPO3 extension typo3_image_proxy
+----
 
-   :Keywords:
-      imgproxy, image, proxy, resize, shrink
+typo3_image_proxy is an extension for TYPO3 CMS. It sends your uploaded pictures
+to a hosted or containerized ImgProxy service to resize and render your images.
 
-   :Copyright:
-      2020-2021
+----
 
-   :Author:
-      Stefan Froemken
-
-   :Email:
-      froemken@gmail.com
-
-   :License:
-      This document is published under the Open Publication License
-      available from http://www.opencontent.org/openpub/
-
-   :Rendered:
-      |today|
-
-   The content of this document is related to TYPO3,
-   a GNU/GPL CMS/Framework available from `www.typo3.org <https://typo3.org/>`__.
-
-
-   **Table of Contents**
+**Table of Contents:**
 
 .. toctree::
-   :maxdepth: 3
-
+   :maxdepth: 2
+   :titlesonly:
 
    Introduction/Index
    Installation/Index
@@ -59,3 +46,11 @@ typo3_image_proxy
    AdministratorManual/Index
    KnownProblems/Index
    Links
+
+.. Meta Menu
+
+.. toctree::
+   :hidden:
+
+   Sitemap
+   genindex
