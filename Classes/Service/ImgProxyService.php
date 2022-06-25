@@ -17,6 +17,7 @@ use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotCon
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Imaging\GraphicalFunctions;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileInterface;
@@ -31,6 +32,12 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 class ImgProxyService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
+    /**
+     * @var RequestFactory
+     */
+    protected $requestFactory;
+
     /**
      * @var string
      */
@@ -83,8 +90,12 @@ class ImgProxyService implements LoggerAwareInterface
      */
     protected $configuration = [];
 
-    public function __construct(ExtensionConfiguration $extensionConfiguration)
-    {
+    public function __construct(
+        ExtensionConfiguration $extensionConfiguration,
+        RequestFactory $requestFactory
+    ) {
+        $this->requestFactory = $requestFactory;
+
         $this->imgProxyUrl = $this->getImgProxyUrl($extensionConfiguration);
         $this->altLocalHostName = (string)$extensionConfiguration->get('typo3_image_proxy', 'altLocalHostName');
         $this->imageMaxWidth = (int)$extensionConfiguration->get('typo3_image_proxy', 'maxImageWidth');
@@ -182,7 +193,10 @@ class ImgProxyService implements LoggerAwareInterface
         );
 
         $temporaryFilePath = $this->getTemporaryFilePath($sourceFile);
-        file_put_contents($temporaryFilePath, $processingUrl);
+        file_put_contents(
+            $temporaryFilePath,
+            $this->requestFactory->request($processingUrl)->getBody()->getContents()
+        );
 
         $imageDimensions = $this->getGraphicalFunctionsObject()->getImageDimensions($temporaryFilePath);
         if ($imageDimensions === false) {
