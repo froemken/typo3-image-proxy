@@ -177,8 +177,8 @@ class ImgProxyService implements LoggerAwareInterface
 
         // Do not resize, if resize was already done
         if (
-            $sourceFile->getProperty('width') > $this->imageMaxWidth
-            || $sourceFile->getProperty('height') > $this->imageMaxHeight
+            $sourceFile->getProperty('width') < $this->imageMaxWidth
+            || $sourceFile->getProperty('height') < $this->imageMaxHeight
         ) {
             return;
         }
@@ -212,8 +212,8 @@ class ImgProxyService implements LoggerAwareInterface
                 'checksum' => $sourceFile->calculateChecksum()
             ]
         );
-        $resourceStorage = GeneralUtility::makeInstance(ResourceStorage::class);
-        $resourceStorage->replaceFile($sourceFile, $temporaryFilePath);
+
+        $this->getResourceStorage()->replaceFile($sourceFile, $temporaryFilePath);
     }
 
     /**
@@ -298,5 +298,10 @@ class ImgProxyService implements LoggerAwareInterface
             },
             ARRAY_FILTER_USE_BOTH
         );
+    }
+
+    protected function getResourceStorage(): ResourceStorage
+    {
+        return GeneralUtility::makeInstance(ResourceStorage::class);
     }
 }
