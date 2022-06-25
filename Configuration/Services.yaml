@@ -7,6 +7,16 @@ services:
   StefanFroemken\Typo3ImageProxy\:
     resource: '../Classes/*'
 
+  # Set public. Will be called by GeneralUtility::makeInstance in ProcessorRegistry
+  StefanFroemken\Typo3ImageProxy\Resource\Processing\ImgProxyProcessor:
+    public: true
+
+  StefanFroemken\Typo3ImageProxy\EventListener\ResizeImageEventListener:
+    tags:
+      - name: event.listener
+        before: StefanFroemken\Typo3ImageProxy\EventListener\SetProcessingUrlEventListener
+        event: TYPO3\CMS\Core\Resource\Event\BeforeFileProcessingEvent
+
   StefanFroemken\Typo3ImageProxy\EventListener\SetProcessingUrlEventListener:
     tags:
       - name: event.listener

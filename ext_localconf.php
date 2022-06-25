@@ -12,12 +12,4 @@ call_user_func(static function () {
             ],
         ];
     }
-
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['fal']['processors']['ImgProxyProcessor'] = [
-        'className' => \StefanFroemken\Typo3ImageProxy\Resource\Processing\ImgProxyProcessor::class,
-        'before' => [
-            'LocalImageProcessor',
-            'DeferredBackendImageProcessor'
-        ]
-    ];
 });

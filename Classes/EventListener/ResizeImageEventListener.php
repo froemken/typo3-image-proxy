@@ -9,69 +9,51 @@ declare(strict_types=1);
  * LICENSE file that was distributed with this source code.
  */
 
-namespace StefanFroemken\Typo3ImageProxy\Resource\Processing;
+namespace StefanFroemken\Typo3ImageProxy\EventListener;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use StefanFroemken\Typo3ImageProxy\Service\ImgProxyService;
 use TYPO3\CMS\Core\Imaging\GraphicalFunctions;
-use TYPO3\CMS\Core\Resource\Processing\ProcessorInterface;
+use TYPO3\CMS\Core\Resource\Event\BeforeFileProcessingEvent;
 use TYPO3\CMS\Core\Resource\Processing\TaskInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Resize uploaded images
+ * Resize image
  */
-class ImgProxyProcessor implements ProcessorInterface
+class ResizeImageEventListener implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var ImgProxyService
      */
     protected $imgProxyService;
-
-    /**
-     * @var string[]
-     */
-    protected $allowedImageExtensions = [
-        'jpg',
-        'jpeg',
-        'png'
-    ];
-
-    /**
-     * @var array
-     */
-    protected $defaultConfiguration = [
-        'width' => 64,
-        'height' => 64,
-    ];
 
     public function __construct(ImgProxyService $imgProxyService)
     {
         $this->imgProxyService = $imgProxyService;
     }
 
-    public function canProcessTask(TaskInterface $task): bool
-    {
-        return in_array($task->getTargetFileExtension(), $this->allowedImageExtensions, true);
-    }
-
-    /**
-     * Processes the given task and sets the processing result in the task object.
-     *
-     * @param TaskInterface $task
-     */
-    public function processTask(TaskInterface $task)
+    public function __invoke(BeforeFileProcessingEvent $event): void
     {
         $processingUrl = $this->imgProxyService->getProcessingUrl(
-            $task->getSourceFile(),
-            $task->getTargetFile(),
-            $task->getConfiguration()
+            $event->getFile(),
+            $event->getProcessedFile(),
+            $event->getConfiguration()
         );
 
+        $task = $event->getProcessedFile()->getTask();
         $temporaryFilePath = $this->getTemporaryFilePath($task);
         file_put_contents($temporaryFilePath, $processingUrl);
 
-        $task->setExecuted(true);
         $imageDimensions = $this->getGraphicalFunctionsObject()->getImageDimensions($temporaryFilePath);
+        if ($imageDimensions === false) {
+            $this->logger->error('File "' . $event->getFile()->getName() . '" could not be resized by ImgProxy. Maybe you are on localhost.');
+            return;
+        }
+
         $task->getTargetFile()->setName('ByImgProxy_' . $task->getTargetFileName());
         $task->getTargetFile()->updateProperties(
             [
@@ -84,12 +66,6 @@ class ImgProxyProcessor implements ProcessorInterface
         $task->getTargetFile()->updateWithLocalFile($temporaryFilePath);
     }
 
-    /**
-     * Returns the path to a temporary file for processing
-     *
-     * @param TaskInterface $task
-     * @return string
-     */
     protected function getTemporaryFilePath(TaskInterface $task): string
     {
         return GeneralUtility::tempnam(
