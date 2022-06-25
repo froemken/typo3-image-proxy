@@ -186,16 +186,21 @@ class ImgProxyService implements LoggerAwareInterface
         );
 
         $temporaryFilePath = $this->getTemporaryFilePath($sourceFile);
-        $response = $this->requestFactory->request($processingUrl);
-        $this->logger->debug('ImgProxy response status: ' . $response->getStatusCode());
+
+        try {
+            $response = $this->requestFactory->request($processingUrl);
+        } catch (\Exception $exception) {
+            $this->logger->error('ImgProxy: Request error: ' . $exception->getMessage());
+            return;
+        }
 
         try {
             file_put_contents(
                 $temporaryFilePath,
-                $this->requestFactory->request($processingUrl)->getBody()->getContents()
+                $response->getBody()->getContents()
             );
         } catch (\Exception $exception) {
-            $this->logger->error('ImgProxy: New file could not been written: Error: ' . $exception->getMessage());
+            $this->logger->error('ImgProxy: Modified file could not been written: Error: ' . $exception->getMessage());
         }
 
         $imageDimensions = $this->getGraphicalFunctionsObject()->getImageDimensions($temporaryFilePath);
