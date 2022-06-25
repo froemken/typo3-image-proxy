@@ -25,8 +25,8 @@ jobs:
             php: '8.0'
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout extension
+        uses: actions/checkout@v3
 
       - name: Setup PHP ${{ matrix.php }}, with composer and extensions
         uses: shivammathur/setup-php@v2
@@ -68,8 +68,8 @@ jobs:
       TYPO3_API_TOKEN: ${{ secrets.TYPO3_API_TOKEN }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout extension
+        uses: actions/checkout@v3
 
       - name: Check tag
         run: |
@@ -102,5 +102,8 @@ jobs:
       - name: Install tailor
         run: composer global require typo3/tailor --prefer-dist --no-progress --no-suggest
 
-      - name: Set GIT tag as version to ext_emconf.php and documentation and publish to TER
+      - name: Set GIT tag as version to ext_emconf.php and documentation
+        run: php ~/.composer/vendor/bin/tailor set-version ${{ steps.get-version.outputs.version }}
+
+      - name: Publish extension to TER
         run: php ~/.composer/vendor/bin/tailor ter:publish --comment "${{ steps.get-comment.outputs.comment }}" ${{ steps.get-version.outputs.version }}
