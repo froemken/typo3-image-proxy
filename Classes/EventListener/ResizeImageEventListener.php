@@ -38,44 +38,6 @@ class ResizeImageEventListener implements LoggerAwareInterface
 
     public function __invoke(BeforeFileProcessingEvent $event): void
     {
-        $processingUrl = $this->imgProxyService->getProcessingUrl(
-            $event->getFile(),
-            $event->getProcessedFile(),
-            $event->getConfiguration()
-        );
-
-        $task = $event->getProcessedFile()->getTask();
-        $temporaryFilePath = $this->getTemporaryFilePath($task);
-        file_put_contents($temporaryFilePath, $processingUrl);
-
-        $imageDimensions = $this->getGraphicalFunctionsObject()->getImageDimensions($temporaryFilePath);
-        if ($imageDimensions === false) {
-            $this->logger->error('File "' . $event->getFile()->getName() . '" could not be resized by ImgProxy. Maybe you are on localhost.');
-            return;
-        }
-
-        $task->getTargetFile()->setName('ByImgProxy_' . $task->getTargetFileName());
-        $task->getTargetFile()->updateProperties(
-            [
-                'width' => $imageDimensions[0],
-                'height' => $imageDimensions[1],
-                'size' => filesize($temporaryFilePath),
-                'checksum' => $task->getConfigurationChecksum()
-            ]
-        );
-        $task->getTargetFile()->updateWithLocalFile($temporaryFilePath);
-    }
-
-    protected function getTemporaryFilePath(TaskInterface $task): string
-    {
-        return GeneralUtility::tempnam(
-            $task->getName(),
-            '.' . $task->getTargetFileExtension()
-        );
-    }
-
-    protected function getGraphicalFunctionsObject(): GraphicalFunctions
-    {
-        return GeneralUtility::makeInstance(GraphicalFunctions::class);
+        $this->imgProxyService->resizeImage($event->getFile(), $event->getProcessedFile());
     }
 }
