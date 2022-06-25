@@ -16,10 +16,11 @@
 		"source": "https://github.com/froemken/typo3_image_proxy"
 	},
 	"require": {
-		"typo3/cms-core": "^10.4 || ^11.0"
+		"typo3/cms-core": "^10.4.29 || ^11.5.11"
 	},
 	"require-dev": {
-		"friendsofphp/php-cs-fixer": "^2.16"
+		"roave/security-advisories": "dev-latest",
+		"friendsofphp/php-cs-fixer": "^3.0"
 	},
 	"autoload": {
 		"psr-4": {
@@ -39,7 +40,7 @@
 	"scripts": {
 		"php:fix": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix Classes",
 		"ci:php:lint": "find *.php Classes Configuration -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l",
-		"ci:php:fixer": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix --dry-run -v --show-progress=dots --diff-format=udiff Classes",
+		"ci:php:fixer": ".build/vendor/bin/php-cs-fixer --config=Build/.php_cs.php fix --dry-run -v --show-progress=dots --diff Classes Tests",
 		"link-extension": [
 			"@php -r 'is_dir($extFolder=__DIR__.\"/.build/public/typo3conf/ext/\") || mkdir($extFolder, 0777, true);'",
 			"@php -r 'file_exists($extFolder=__DIR__.\"/.build/public/typo3conf/ext/typo3_image_proxy\") || symlink(__DIR__,$extFolder);'"
