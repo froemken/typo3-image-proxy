@@ -21,6 +21,8 @@ use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Imaging\GraphicalFunctions;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\FileInterface;
+use TYPO3\CMS\Core\Resource\FileReference;
+use TYPO3\CMS\Core\Resource\ProcessedFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
@@ -37,57 +39,33 @@ class ImgProxyService implements LoggerAwareInterface
      */
     protected $requestFactory;
 
-    /**
-     * @var string
-     */
-    protected $imgProxyUrl = 'http://example.com:8080/';
+    protected string $imgProxyUrl = 'http://example.com:8080/';
 
-    /**
-     * @var string
-     */
-    protected $imgProxyKeyBin = '';
+    protected string $imgProxyKeyBin = '';
 
-    /**
-     * @var string
-     */
-    protected $imgProxySaltBin = '';
+    protected string $imgProxySaltBin = '';
 
-    /**
-     * @var string
-     */
-    protected $altLocalHostName = '';
+    protected string $altLocalHostName = '';
 
-    /**
-     * @var int
-     */
-    protected $imageMaxWidth = 1024;
+    protected int $imageMaxWidth = 1024;
 
-    /**
-     * @var int
-     */
-    protected $imageMaxHeight = 1024;
+    protected int $imageMaxHeight = 1024;
 
     /**
      * @var string[]
      */
-    protected $allowedImageExtensions = [
+    protected array $allowedImageExtensions = [
         'jpg',
         'jpeg',
         'png'
     ];
 
-    /**
-     * @var array
-     */
-    protected $defaultConfiguration = [
+    protected array $defaultConfiguration = [
         'width' => 64,
         'height' => 64,
     ];
 
-    /**
-     * @var array
-     */
-    protected $configuration = [];
+    protected array $configuration = [];
 
     public function __construct(
         ExtensionConfiguration $extensionConfiguration,
@@ -120,12 +98,23 @@ class ImgProxyService implements LoggerAwareInterface
     /**
      * Get processing URL for external ImgProxy service.
      * This method also sets the new dimensions to $targetFile
+     *
+     * @param File|ProcessedFile $sourceFile
+     * @param File|ProcessedFile $targetFile
      */
     public function getProcessingUrl(
         FileInterface $sourceFile,
         FileInterface $targetFile,
         array $configuration
     ): string {
+        if (!$sourceFile instanceof File && !$sourceFile instanceof ProcessedFile) {
+            return '';
+        }
+
+        if (!$targetFile instanceof File && !$targetFile instanceof ProcessedFile) {
+            return '';
+        }
+
         if ($this->imgProxyKeyBin === '' || $this->imgProxySaltBin === '') {
             return '';
         }
@@ -154,17 +143,23 @@ class ImgProxyService implements LoggerAwareInterface
             $targetFile->getExtension()
         );
 
+        $this->logger->debug('ImgProxy configuration path: ' . $path);
+
         $signature = hash_hmac('sha256', $this->imgProxySaltBin . $path, $this->imgProxyKeyBin, true);
         $signature = base64_encode($signature);
         $signature = strtr($signature, '+/', '-_');
         $signature = rtrim($signature, '=');
 
-        return sprintf(
+        $processingUrl = sprintf(
             '%s%s%s',
             $this->imgProxyUrl,
             $signature,
             $path
         );
+
+        $this->logger->debug('ImgProxy processing URL: ' . $processingUrl);
+
+        return $processingUrl;
     }
 
     public function resizeImage(FileInterface $sourceFile): void
@@ -192,10 +187,17 @@ class ImgProxyService implements LoggerAwareInterface
         );
 
         $temporaryFilePath = $this->getTemporaryFilePath($sourceFile);
-        file_put_contents(
-            $temporaryFilePath,
-            $this->requestFactory->request($processingUrl)->getBody()->getContents()
-        );
+        $response = $this->requestFactory->request($processingUrl);
+        $this->logger->debug('ImgProxy response status: ' . $response->getStatusCode());
+
+        try {
+            file_put_contents(
+                $temporaryFilePath,
+                $this->requestFactory->request($processingUrl)->getBody()->getContents()
+            );
+        } catch (\Exception $exception) {
+            $this->logger->error('ImgProxy: New file could not been written: Error: ' . $exception->getMessage());
+        }
 
         $imageDimensions = $this->getGraphicalFunctionsObject()->getImageDimensions($temporaryFilePath);
         if ($imageDimensions === false) {
