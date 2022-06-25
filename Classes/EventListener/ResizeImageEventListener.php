@@ -14,10 +14,7 @@ namespace StefanFroemken\Typo3ImageProxy\EventListener;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use StefanFroemken\Typo3ImageProxy\Service\ImgProxyService;
-use TYPO3\CMS\Core\Imaging\GraphicalFunctions;
 use TYPO3\CMS\Core\Resource\Event\BeforeFileProcessingEvent;
-use TYPO3\CMS\Core\Resource\Processing\TaskInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Resize image
