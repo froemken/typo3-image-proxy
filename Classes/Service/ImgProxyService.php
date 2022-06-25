@@ -125,10 +125,18 @@ class ImgProxyService implements LoggerAwareInterface
         $publicUrlOfImage = $this->getPublicUrlOfImage($sourceFile);
         $width = $this->mergeWithDefaultConfiguration($configuration)['width'];
         $height = $this->mergeWithDefaultConfiguration($configuration)['height'];
-        $targetFile->updateProperties([
-            'width' => $width,
-            'height' => $height,
-        ]);
+
+        if ($targetFile instanceof ProcessedFile) {
+            $targetFile->updateProperties([
+                'width' => $width,
+                'height' => $height,
+            ]);
+        } else {
+            $targetFile->getMetaData()->add([
+                'width' => $width,
+                'height' => $height,
+            ]);
+        }
 
         // PATH: /{$resize}/{$width}/{$height}/{$gravity}/{$enlarge}/{$encodedUrl}.{$extension}"
         $path = sprintf(
