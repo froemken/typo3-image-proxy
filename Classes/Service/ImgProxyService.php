@@ -212,7 +212,11 @@ class ImgProxyService implements LoggerAwareInterface
             ]
         );
 
-        $sourceFile->getStorage()->replaceFile($sourceFile, $temporaryFilePath);
+        try {
+            $sourceFile->getStorage()->replaceFile($sourceFile, $temporaryFilePath);
+        } catch (\Exception $exception) {
+            $this->logger->error('ImgProxy: File "' . $sourceFile->getName() . '" could not be renamed. Error: ' . $exception->getMessage());
+        }
     }
 
     /**
