@@ -31,3 +31,7 @@ Download and install `typo3_image_proxy` with the extension manager module.
 
 1) Open Extension Settings and configure properties to your needs
 2) The uploaded files must be public available (do not block access with .htaccess or secure_download)
+
+# Sponsors
+
+Big THX goes to [Blackfire.io](https://www.blackfire.io)
